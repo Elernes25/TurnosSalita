@@ -1,0 +1,6 @@
+.env
+node_modules/
+archivos-descargas/
+pruebas/
+public/
+codigo errores HTTP.txt
