@@ -1,0 +1,66 @@
+const Paciente = require('../models/paciente.js');
+
+const respuestaEstandar = (res, status, success,message, data = null) => {
+  res.status(status).json({
+    success: success,
+    timestamp: new Date().toISOString(),
+    mensaje: message,
+    total: Array.isArray(data) ? data.length : (data ? 1 : 0), /*si data es un array, devuelve su longitud; si data es un objeto, devuelve 1; si data es null, devuelve 0*/
+    datos: data
+  });
+};
+
+// GET: listar pacientes
+const getPacientes = async (req, res) => {
+  try {
+    const pacientes = await Paciente.find();
+    return respuestaEstandar(res, 200, true, "Pacientes obtenidos correctamente", pacientes);
+  } catch (error) {
+    return respuestaEstandar(res, 500, false, "Error al obtener los pacientes", error.message);
+  
+    }
+};
+
+// GET: obtener pacientes por DNI Ej: http://localhost:3000/api/v1/pacientes/12345678
+const getPacientesDNI = async (req, res) => {
+  try {
+    const { dni } = req.params;
+    const paciente = await Paciente.findOne({ dni: dni });
+    if (!paciente) {
+        return respuestaEstandar(res, 404, false, `Paciente no encontrado con DNI: ${dni}`);
+    }
+        return respuestaEstandar(res, 200, true, "Paciente obtenido correctamente", paciente);
+  } catch (error) {
+    return respuestaEstandar(res, 500, false, "Error al obtener el paciente", error.message);
+  }
+};
+
+
+// POST: guardar paciente
+const createPacientes = async (req, res) => {
+  try {
+    const nuevoPaciente = new Paciente(req.body);
+    await nuevoPaciente.save();
+    return respuestaEstandar(res, 201, true, "Paciente creado exitosamente", nuevoPaciente);
+  } catch (error) {
+    return respuestaEstandar(res, 400, false, "Error al crear el paciente", error.message);
+  }
+};
+
+//DELETE: eliminar paciente por ID Ej: http://localhost:3000/api/v1/pacientes/6a5945fdf6215d646538767e
+const deletePacientes = async (req, res) => {
+  try {
+    const { id } = req.params;   /*id, definido en la ruta*/
+    const paciente = await Paciente.findByIdAndDelete(id);
+    if (!paciente) {
+      return respuestaEstandar(res, 404, false, `Paciente no encontrado ${id}`);
+    }
+    return respuestaEstandar(res, 200, true, "Paciente eliminado exitosamente", paciente);
+} catch (error) {
+      return respuestaEstandar(res, 400, false, "ID con formato invalido", error.message);
+   
+  }
+}
+
+
+module.exports = { getPacientes, getPacientesDNI, createPacientes, deletePacientes };

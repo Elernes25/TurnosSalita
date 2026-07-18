@@ -10,6 +10,8 @@ const respuestaEstandar = (res, status, success,message, data = null) => {
   });
 };
 
+
+
 // GET: listar turnos
 const getTurnos = async (req, res) => {
   try {
@@ -43,7 +45,10 @@ const createTurnos = async (req, res) => {
   try {
     const nuevoTurno = new Turno(req.body);
     await nuevoTurno.save();
-    //res.status(201).json(nuevoTurno);
+  
+    /*estaria bueno vincular el id pero para mostrar el nombre del paciente*/
+    /*es decir formatear la salida */
+
     return respuestaEstandar(res, 201, true, "Turno creado exitosamente", nuevoTurno);
   } catch (error) {
     // res.status(400).json({ error: error.message });

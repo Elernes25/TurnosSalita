@@ -11,12 +11,13 @@ connectDB(); /*conecta a la base de datos usando la función connectDB del archi
 const auditoriaMiddleware = require('./src/middlewares/auditoria.middleware.js');
 const errorHandleMiddleware = require('./src/middlewares/errorHandle.middleware.js');
 const turnosRoutes = require('./src/routes/turnos.routes.js');
-
+const pacientesRoutes = require('./src/routes/pacientes.routes.js');
 
 app.use(express.json());
 app.use(auditoriaMiddleware);
 
 app.use('/api/v1/turnos', turnosRoutes); /*termina el flujo con un response */
+app.use('/api/v1/pacientes', pacientesRoutes); 
 
 app.use(errorHandleMiddleware); /*manejo de errores para rutas no encontradas*/
 
@@ -38,5 +39,4 @@ Contiene información sobre:
     La plataforma (process.platform)
     Señales y eventos del sistema (process.on(...))
 
-👉 Piensa en process como una “ventana” que te deja ver
-y manipular el estado del programa que está corriendo en tu máquina.*/
+Deja ver y manipular el estado del programa que está corriendo*/

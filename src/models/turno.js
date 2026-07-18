@@ -1,17 +1,6 @@
 const mongoose = require('mongoose');
 turnoSchema = new mongoose.Schema({
-    paciente:{
-        type: String,
-        required: [true,'El nombre del paciente es obligatorio'],
-        uppercase: true
-             },
     
-    dni:{
-            type: String,
-            required: [true,'El DNI es obligatorio'],
-            //match: [/^\d{8,10}$/, 'El DNI debe tener 8 dígitos'] expresiones regulares para validar el formato del DNI    
-            match: [/^\d[0-9]{7,8}$/, 'El DNI debe tener entre 7 y 8 dígitos'] // expresi ones regulares para validar el formato del DNI
-        },
     especialidad:{
         type: String,
         required: [true,'La especialidad es obligatoria'],
@@ -38,6 +27,12 @@ turnoSchema = new mongoose.Schema({
             message: '{VALUE} El estado del turno no es válido'
         }
     },
+    paciente: {
+	    type: mongoose.Schema.Types.ObjectId,   // referencia a un ID de Mongo
+	    ref: "Paciente",                        // nombre del modelo relacionado
+	    required: true
+  }
+
 },{
     timestamps: true,
 }
@@ -49,6 +44,8 @@ turnoSchema.set('toJSON', {
         turnoRetorno.id = turnoRetorno._id;
         delete turnoRetorno._id;
         delete turnoRetorno.__v;
+        delete turnoRetorno.createdAt; /*borra los campos agregados por el timestamps */
+        delete turnoRetorno.updatedAt;
     }
 });
 

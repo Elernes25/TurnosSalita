@@ -23,5 +23,10 @@ process.on('SIGINT',async()=>{
     process.exit(0);
 });
 
+/*
+process.on(evento, callback) te permite engancharte a eventos del proceso.
+Los más usados son: exit, uncaughtException, unhandledRejection, SIGINT, SIGTERM.
+Es clave para hacer tu aplicación más robusta y controlada frente a errores o cierres inesperados.
+*/
 
 module.exports=connectDB;
