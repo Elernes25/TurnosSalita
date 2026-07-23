@@ -30,6 +30,25 @@ pacienteSchema = new mongoose.Schema({
 	    type: String,
 	    required:false
 	},
+
+/* telefono: {
+        { tipo: type: String,
+          enum: {
+                values: ['CELULAR', 'FIJO'],
+                 message: '(VALUE) TIPO DE CELULAR NO VALIDO'
+           } , 
+        codigoArea: { type: String },
+        numero: { type: String }
+        },
+        required:false
+    },*/
+    
+    email:{
+        type: String,
+        required: false,
+        match: [/\S+@\S+\.\S+/, 'El correo electrónico no es válido'] 
+    },
+
     tieneObraSocial:{
 	    type: Boolean,
 	    required: [true,'La información de obra social es obligatoria']
@@ -38,6 +57,17 @@ pacienteSchema = new mongoose.Schema({
 	    type: String,
 	    required: function() { return this.tieneObraSocial; } //referencia al campo tieneObraSocial para que sea obligatorio solo si el paciente tiene obra social
 	},
+/*Obra social o prepaga (nombre de la entidad).
+    Número de afiliado 
+    Plan médico (determina el nivel de cobertura).
+    categoría de afiliación (titular o familiar).
+    obraSocial:{
+        nombre: { type: String, required: function() { return this.tieneObraSocial; } },
+        numeroAfiliado: { type: String, required: function() { return this.tieneObraSocial; } },
+        planMedico: { type: String, required: function() { return this.tieneObraSocial; } }
+    }
+*/
+
     grupoSanguineo:{
 	    type: String,
 	    required:true,
@@ -48,12 +78,27 @@ pacienteSchema = new mongoose.Schema({
                         //otros campos a considerar podrian ser: antecedentes familiares, medicación actual, alergias a medicamentos, etc.
                         //podria haber datos relevantes segun la especialidad medica, por ej.: antecedentes obstetricos para ginecologia,
                         //antecedentes cardiacos para cardiologia, etc.
-	    alergias: { type: String },
-        cirugias: { type: String },
-        enfermedadesCronicas: { type: String },
+	    alergias: [{ type: String }], /*arreglo de strings para realizar busquedas refinadas */
+        cirugias: [{ type: String }],
+        enfermedadesCronicas: [{ type: String }],
         historiaGeneral: { type: String } /* info no especifica pero relevante*/
 	}
-})
+},
+{timesstamps: true},
+
+);/*agrega createdAt y updatedAt automáticamente*/
+
+pacienteSchema.set('toJSON', {
+    transform: (documento, pacienteRetorno) => {
+        pacienteRetorno.id = pacienteRetorno._id;
+        delete pacienteRetorno._id;
+        delete pacienteRetorno.__v;
+        delete pacienteRetorno.createdAt; /*borra los campos agregados por el timestamps */
+        delete pacienteRetorno.updatedAt;
+    }
+}
+);
+
 
 //nombre del modelo: Paciente con mayuscula//
 module.exports = mongoose.model("Paciente", pacienteSchema)
