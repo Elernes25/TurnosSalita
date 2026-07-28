@@ -7,8 +7,9 @@ pacienteSchema = new mongoose.Schema({
          },
      dni:{
             type: String,
+            unique: true,
             required: [true,'El DNI es obligatorio'],
-            match: [/^\d[0-9]{7,8}$/, 'El DNI debe tener entre 7 y 8 dígitos'] 
+            match: [/^\d[0-9]{7,8}$/, 'El DNI debe tener entre 7 y 8 dígitos']
         },
     fechaDeNacimiento:{
 	    type: Date,
@@ -55,6 +56,8 @@ pacienteSchema = new mongoose.Schema({
 	},
     obraSocialNombre: {
 	    type: String,
+        /*enum: ['PAMI', 'OSDE', 'IOMA', 'NINGUNA'], //hay mas de 40 obras sociales en el pais 
+        index: true,*/
 	    required: function() { return this.tieneObraSocial; } //referencia al campo tieneObraSocial para que sea obligatorio solo si el paciente tiene obra social
 	},
 /*Obra social o prepaga (nombre de la entidad).
@@ -88,6 +91,16 @@ pacienteSchema = new mongoose.Schema({
 
 );/*agrega createdAt y updatedAt automáticamente*/
 
+
+/*pacienteSchema.virtual('edad').get(function() 
+    { // Calculamos los años de diferencia entre hoy y su fecha de nacimiento const hoy = new Date();
+const nacimiento = new Date(this.fechaNacimiento); 
+return hoy.getFullYear() - nacimiento.getFullYear(); 
+}); // Para que el JSON final incluya estos campos "fantasma",
+//  debemos avisarle al toJSON: 
+// pacienteSchema.set('toJSON', { virtuals: true });*/
+
+
 pacienteSchema.set('toJSON', {
     transform: (documento, pacienteRetorno) => {
         pacienteRetorno.id = pacienteRetorno._id;
@@ -96,6 +109,7 @@ pacienteSchema.set('toJSON', {
         delete pacienteRetorno.createdAt; /*borra los campos agregados por el timestamps */
         delete pacienteRetorno.updatedAt;
     }
+    //<------- agregar virtuals despues  virtuals: true 
 }
 );
 
