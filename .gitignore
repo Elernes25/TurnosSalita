@@ -1,6 +1,7 @@
 .env
 node_modules/
 archivos-descargas/
+clonado/
 pruebas/
 public/
 codigo errores HTTP.txt

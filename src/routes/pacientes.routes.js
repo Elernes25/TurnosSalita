@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const{getPacientes,getPacientesDNI,createPacientes,deletePacientes}=require('../controllers/pacientes.controllers.js');
+const{getPacientes,getPacientesDNI,createPacientes,deletePacientes}=require('../controllers/pacientes.controller.js');
 /* especifica que se importan las funciones getPacientes, getPacientesDNI, createPacientes 
 y deletePacientes desde el archivo pacientes.controllers.js ubicado en la carpeta controllers. 
 Estas funciones se utilizarán como controladores para manejar las solicitudes HTTP relacionadas

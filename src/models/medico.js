@@ -24,7 +24,7 @@ medicoSchema = new mongoose.Schema({
         required: [true,'La especialidad es obligatoria'],
         enum: {
             values: ['CARDIOLOGÍA', 'NEUROLOGÍA', 'PEDIATRÍA', 'TRAUMATOLOGÍA','ODONTOLOGÍA','OFTALMOLOGÍA'],
-            message: '(VALUE) La especialidad no es válida' /*(VALUE) placeholder de Mongoose. */
+            message: '{VALUE} La especialidad no es válida' /*{VALUE} placeholder de Mongoose. */
         }
         },
 
@@ -71,4 +71,4 @@ medicoSchema.set('toJSON', {
 
 
 //nombre del modelo: Medico con mayúscula//
-module.exports = mongoose.model("Medico", pacienteSchema)
+module.exports = mongoose.model("Medico", medicoSchema)

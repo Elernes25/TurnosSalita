@@ -1,21 +1,25 @@
 const Paciente = require('../models/paciente.js');
-
 const respuestaEstandar=require('../utils/respuestaEstandar.js');
-/*const respuestaEstandar = (res, status, success,message, data = null) => {
-  res.status(status).json({
-    success: success,
-    timestamp: new Date().toISOString(),
-    mensaje: message,
-    total: Array.isArray(data) ? data.length : (data ? 1 : 0), 
-    datos: data
-  });
-};
-*/
 
 // GET: listar pacientes
 const getPacientes = async (req, res) => {
   try {
-    const pacientes = await Paciente.find();
+    // ?obraSocial=OSDE@dni=23074839
+    const {obraSocialNombre, dni}=req.query;
+    const filtro={};
+    if (obraSocialNombre){
+      filtro.obraSocialNombre= obraSocialNombre.toUpperCase();
+    
+    }
+     if (dni){
+      filtro.dni=dni;
+    }
+    console.log("filtro armado", filtro);
+
+
+    const pacientes = await Paciente.find(filtro);
+
+
     return respuestaEstandar(res, 200, true, "Pacientes obtenidos correctamente", pacientes);
   } catch (error) {
     return respuestaEstandar(res, 500, false, "Error al obtener los pacientes", error.message);

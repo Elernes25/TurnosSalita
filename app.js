@@ -1,23 +1,25 @@
 require('dotenv').config({ path: './src/.env' }); /*carga las variables de entorno desde el archivo .env*/
 
-
 const express = require('express');
 const connectDB = require('./src/config/database.js');
 const app = express();
 
 connectDB(); /*conecta a la base de datos usando la función connectDB del archivo database.js*/
 
-
 const auditoriaMiddleware = require('./src/middlewares/auditoria.middleware.js');
 const errorHandleMiddleware = require('./src/middlewares/errorHandle.middleware.js');
 const turnosRoutes = require('./src/routes/turnos.routes.js');
 const pacientesRoutes = require('./src/routes/pacientes.routes.js');
+const medicosRoutes = require('./src/routes/medicos.routes.js');
+const recepcionRoutes = require('./src/routes/recepcion.routes');
 
 app.use(express.json());
 app.use(auditoriaMiddleware);
 
 app.use('/api/v1/turnos', turnosRoutes); /*termina el flujo con un response */
 app.use('/api/v1/pacientes', pacientesRoutes); 
+app.use('/api/v1/medicos', medicosRoutes); 
+app.use('/api/v1/recepcion', recepcionRoutes);
 
 app.use(errorHandleMiddleware); /*manejo de errores para rutas no encontradas*/
 

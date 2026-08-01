@@ -27,6 +27,11 @@ turnoSchema = new mongoose.Schema({
             message: '{VALUE} El estado del turno no es válido' /*{VALUE} o (VALUE) son equivalentes */
         }
     },
+    
+    observaciones: {
+        type: String,
+    },
+
     activo: {
         type: Boolean,
         default: true,

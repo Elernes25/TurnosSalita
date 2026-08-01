@@ -1,17 +1,5 @@
-const Turno = require('../models/turno');
-
+const Turno = require('../models/turno.js');
 const respuestaEstandar=require('../utils/respuestaEstandar.js');
-
-/*const respuestaEstandar = (res, status, success,message, data = null) => {
-  res.status(status).json({
-    success: success,
-    timestamp: new Date().toISOString(),
-    mensaje: message,
-    total: Array.isArray(data) ? data.length : (data ? 1 : 0), 
-    datos: data
-  });
-};
-*/
 
 
 // GET: listar turnos
@@ -53,11 +41,6 @@ const getTurnos = async (req, res) => {
 
 */
 
-
-
-
-
-
 // GET: obtener turnos por especialidad Ej: http://localhost:3000/api/v1/turnos/Odontología
 const getTurnosEspecialidad = async (req, res) => {
   try {
@@ -77,18 +60,38 @@ const getTurnosEspecialidad = async (req, res) => {
 // POST: guardar turno
 const createTurnos = async (req, res) => {
   try {
+
+    const origenPeticion=req.headers['x-origen'];
+    const tokenSeguridad=req.headers['authorization'];
+    console.log("peticion realizada desde",origenPeticion);
+    if (tokenSeguridad!='token123'){
+        return respuestaEstandar(res,401,false,'No tiene permisos')
+    };
+
+    // ?urgencia=true
+    const  esUrgente=req.query.urgencia ==='true';
+    const datosDelTurno ={
+        paciente:req.body.paciente,
+        especialidad:req.body.especialidad,
+        fechaTurno:req.bodyFechaTurno
+    };
+    if (esUrgente){
+        datosDelTurno.estado='atendido';
+        datosDelTurno.observaciones='ingresoporguardiamedica';
+        console.log("🚨 ALERTA: registrado un turno de urgencia");
+
+    }
+
     const nuevoTurno = new Turno(req.body);
     await nuevoTurno.save();
   
     /*POPULATE PARA vincular el id pero para mostrar el nombre del paciente*//*es decir formatear la salida */
     return respuestaEstandar(res, 201, true, "Turno creado exitosamente", nuevoTurno.populate('paciente')); /*populate*/
   } catch (error) {
-    /*if(error.name === 'ValidationError') {
-    const errores=Object.values(error.errors).map(err => err.message);
-    return respuestaEstandar(res, 400, false, "Error de validación", errores);
-    } */
-
-    // res.status(400).json({ error: error.message });
+    if(error.name === 'ValidationError') {
+      const errores=Object.values(error.errors).map(err => err.message);
+      return respuestaEstandar(res, 400, false, "Error de validación", errores);
+    } 
     return respuestaEstandar(res, 400, false, "Error al crear el turno", error.message);
   }
 };

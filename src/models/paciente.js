@@ -36,7 +36,7 @@ pacienteSchema = new mongoose.Schema({
         { tipo: type: String,
           enum: {
                 values: ['CELULAR', 'FIJO'],
-                 message: '(VALUE) TIPO DE CELULAR NO VALIDO'
+                 message: '{VALUE} TIPO DE CELULAR NO VALIDO'
            } , 
         codigoArea: { type: String },
         numero: { type: String }
