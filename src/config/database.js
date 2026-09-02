@@ -1,5 +1,5 @@
 const mongoose=require('mongoose');
-const uri = process.env.DATABASE_URL || "mongodb://localhost:27017/salita_municipal"; // URI de conexión a la base de datos
+const uri = process.env.DATABASE_URL_ATLAS || "mongodb://localhost:27017/salita_municipal"; // URI de conexión a la base de datos
 //
 console.log(`🔵💙Intentando conectar a la base de datos en: ${uri}`    
 );

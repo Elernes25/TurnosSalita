@@ -1,14 +1,22 @@
 const mongoose = require('mongoose');
+const type = require('mongoose/lib/schema/operators/type');
 turnoSchema = new mongoose.Schema({
     
-    especialidad:{
+   /* especialidad:{
         type: String,
         required: [true,'La especialidad es obligatoria'],
         enum: {
             values: ['Cardiología', 'Neurología', 'Pediatría', 'Traumatología','Odontología','Oftalmología'],
-            message: '(VALUE) La especialidad no es válida' /*(VALUE) Es un placeholder especial de Mongoose. */
+            message: '(VALUE) La especialidad no es válida' 
         }
         },
+    */
+    especialidad:{
+        type: mongoose.Schema.Types.ObjectId,   // referencia a un ID de Mongo
+        ref: "Especialidad",                        // nombre del modelo relacionado
+        required: [true,'La especialidad es obligatoria']
+    },
+
     fechaTurno: {
         type: Date,
         required: [true, 'La fecha del turno es obligatoria'],

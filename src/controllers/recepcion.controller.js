@@ -7,11 +7,15 @@ const registrarIngreso = async(req,res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try{
-        const {datosPaciente, especilidad, fechaTurno, estado, observaciones}=req.body;
-        const [nuevoPaciente]=await Paciente.create([datosPaciente],{session});
+        /* se hace transaction porque tiene que traer datos de diferentes esquemas */
+        const {datosPaciente, especialidad, fechaTurno, estado, observaciones}=req.body;
 
-        const [nuevoturno]=await Turno.create([{
-            paciente: nuevoPaciente_id,
+        /*acá deberia validar si ese paciente es nuevo o uno existente
+        dependiendo de como seria el FRONTEND */
+
+        const [nuevoPaciente]=await Paciente.create([datosPaciente],{session});
+        const [nuevoTurno]=await Turno.create([{
+            paciente: nuevoPaciente._id,
             especialidad,
             fechaTurno,
             estado: estado || 'pendiente',
@@ -23,9 +27,11 @@ const registrarIngreso = async(req,res) => {
 
         const turnoCompleto = await Turno.findById(nuevoTurno.id).populate('paciente');
         return respuestaEstandar(res, 201, true, "ingreso paciente nuevo", turnoCompleto);
+
     } catch (error){
         await session.abortTransaction();
         session.endSession();
+
         if (error.name === 'ValidationError') {
             const errores = Object.values(error.errors).map(err => err.message);
             return respuestaEstandar(res, 400, false, 'Error de validación', errores);

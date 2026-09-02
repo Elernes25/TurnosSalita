@@ -12,22 +12,19 @@ medicoSchema = new mongoose.Schema({
             match: [/^\d[0-9]{7,8}$/, 'El DNI debe tener entre 7 y 8 dígitos']
         },
 
- /*
-    especialidad: {
+     especialidad: {
         type: mongoose.Schema.Types.ObjectId,   // referencia a un ID de Mongo
         ref: "Especialidad",                        // nombre del modelo relacionado
         required: [true,'La especialidad es obligatoria']
-    }
-*/
-    especialidad:{ /*este podria ser otro esquema */
+    },
+ /*   especialidad:{
         type: String,
         required: [true,'La especialidad es obligatoria'],
         enum: {
             values: ['CARDIOLOGÍA', 'NEUROLOGÍA', 'PEDIATRÍA', 'TRAUMATOLOGÍA','ODONTOLOGÍA','OFTALMOLOGÍA'],
-            message: '{VALUE} La especialidad no es válida' /*{VALUE} placeholder de Mongoose. */
+            message: '{VALUE} La especialidad no es válida' 
         }
-        },
-
+*/
     numeroMatricula:{
         type: String,
         required: [true,'El Número de matrícula es obligatorio'],
@@ -37,20 +34,54 @@ medicoSchema = new mongoose.Schema({
     /*si hubiera otro esquema con obras sociales */
     //obrasSociales:[{ type: mongoose.Schema.Types.ObjectId, ref: 'obraSocial' }],   
     
-    direccion:{
-        type: String,
-        required: [true,'La dirección es obligatoria'],
+     direccion: {
+        calle: {
+          type: String,
+          required: [true, 'La calle es obligatoria']
+         },
+        numero: {
+          type: String,
+          required: [true, 'El número es obligatorio']
+         },
+        piso: {
+          type: String
+        },
+        departamento: {
+          type: String
+        },
+        barrio: {
+          type: String
+        }
+      },
+    telefono: {
+        tipo: {
+            type: String,
+            enum: ['CELULAR', 'FIJO']
+        },
+        codigoPais: {   /*guardar sin el + */
+            type: String,
+            required: true,
+            trim: true,
+            match: [/^[1-9][0-9]{0,2}$/, 'El código de País no es válido']
+        },
+        codigoArea: {
+            type: String,
+            required: true,
+            match: [/^[0-9]{2,5}$/, 'El código de área no es válido']
+        },
+        numero: {
+            type: String,
+            required: true,
+            match: [/^[0-9]{6,10}$/, 'El número de teléfono no es válido'] /*620 669 SEIS DIGITOS*/
+        }
     },
-    telefono:{
-        type: String,
-        required:false
-    },
- 
+    
     email:{
         type: String,
         required: false,
         match: [/\S+@\S+\.\S+/, 'El correo electrónico no es válido'] 
     }
+    /*se podria identificar a aquel medico que este de guardia o que se le pueda llamar por una urgencia */
 
 },
 {timesstamps: true},

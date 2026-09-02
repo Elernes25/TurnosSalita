@@ -1,20 +1,24 @@
 const mongoose = require('mongoose');
+
 especialidadSchema = new mongoose.Schema({
 
     especialidadNombre:{ 
         type: String,
         required: [true,'La especialidad es obligatoria'],
-        enum: {
-            values: ['CARDIOLOGÍA', 'NEUROLOGÍA', 'PEDIATRÍA', 
-                    'TRAUMATOLOGÍA','ODONTOLOGÍA','OFTALMOLOGÍA'],
-            message: '(VALUE) La especialidad no es válida' /*(VALUE) placeholder de Mongoose. */
-        }
+        unique: true,
+        uppercase: true
+       /*las tengo que llenar cuando se cargan y puede haber muchas mas que esa lista */ 
+       // enum: {
+       //     values: ['CARDIOLOGÍA', 'NEUROLOGÍA', 'PEDIATRÍA', 
+       //            'TRAUMATOLOGÍA','ODONTOLOGÍA','OFTALMOLOGÍA'],
+       //    message: '(VALUE) La especialidad no es válida' /*(VALUE) placeholder de Mongoose. */
+       //
     }
 },
 {timesstamps: true},
 );
 
-especialidadNombreSchema.set('toJSON', {
+especialidadSchema.set('toJSON', {
     transform: (documento, especialidadRetorno) => {
         especialidadRetorno.id = especialidadRetorno._id;
         delete especialidadRetorno._id;
@@ -25,4 +29,4 @@ especialidadNombreSchema.set('toJSON', {
 }
 );
 
-module.exports = mongoose.model("Especilidad", pacienteSchema)
+module.exports = mongoose.model("Especialidad", especialidadSchema)

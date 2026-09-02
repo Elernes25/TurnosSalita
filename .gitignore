@@ -1,7 +1,10 @@
 .env
 node_modules/
 archivos-descargas/
+bibliografia/
 clonado/
 pruebas/
 public/
 codigo errores HTTP.txt
+extractSchemas.js
+schemas.json

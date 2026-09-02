@@ -49,6 +49,7 @@ const createPacientes = async (req, res) => {
     await nuevoPaciente.save();
     return respuestaEstandar(res, 201, true, "Paciente creado exitosamente", nuevoPaciente);
   } catch (error) {
+    console.log(error.message);
     return respuestaEstandar(res, 400, false, "Error al crear el paciente", error.message);
   }
 };

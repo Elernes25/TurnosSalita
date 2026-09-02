@@ -3,25 +3,43 @@ const respuestaEstandar=require('../utils/respuestaEstandar.js');
 
 
 // GET: listar turnos
-const getTurnos = async (req, res) => {
-  try {
-    const turnos = await Turno.find({ activo: true }).populate('paciente'); /*populate: función de Mongoose para reemplazar el ObjectId del paciente con los datos del paciente (nombre, apellido y dni) */
-      return respuestaEstandar(res, 200, true, "Turnos obtenidos correctamente", turnos);
-    } catch (error) {
-      return respuestaEstandar(res, 500, false, "Error al obtener los turnos", error.message);
+//const getTurnos = async (req, res) => {
+//  try {
+//    const turnos = await Turno.find({ activo: true }).populate('paciente'); /*populate: función de Mongoose para reemplazar el ObjectId del paciente con los datos del paciente (nombre, apellido y dni) */
+//      return respuestaEstandar(res, 200, true, "Turnos obtenidos correctamente", turnos);
+//    } catch (error) {
+ //     return respuestaEstandar(res, 500, false, "Error al obtener los turnos", error.message);
       //* res.status(500).json({ error: error.message });*/
-    }
-};
+ //   }
+//};
 /*
+const getTurnosID = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const turno = await Turno.findOne({ id: id });
+    if (!turno) {
+        return respuestaEstandar(res, 404, false, `turno no encontrado con ID: ${id}`);
+    }
+        return respuestaEstandar(res, 200, true, "Turno obtenido correctamente", turno);
+  } catch (error) {
+    return respuestaEstandar(res, 500, false, "Error al obtener el turno", error.message);
+  }
+};
+
+*/
+
 
 // GET: listar turnos con filtros dinámicos
 const getTurnos = async (req, res) => {
   try {
     // Extraer los query params
-    const { especialidad, activo, paciente } = req.query;
+    const { especialidad, activo, paciente, id } = req.query;
 
     // Construir objeto de filtros dinámicamente
     const filtros = {};
+    if (id) {filtros.id = id;
+      console.log("filtro por id", filtros.id);
+    };
     if (especialidad) filtros.especialidad = especialidad;
     if (activo !== undefined) filtros.activo = activo === 'true'; // convertir string a boolean
     if (paciente) filtros.paciente = paciente; // si quieres filtrar por id de paciente
@@ -39,8 +57,7 @@ const getTurnos = async (req, res) => {
   }
 };
 
-*/
-
+/*
 // GET: obtener turnos por especialidad Ej: http://localhost:3000/api/v1/turnos/Odontología
 const getTurnosEspecialidad = async (req, res) => {
   try {
@@ -56,7 +73,7 @@ const getTurnosEspecialidad = async (req, res) => {
     return respuestaEstandar(res, 500, false, "Error al obtener los turnos", error.message);
   }
 }
-
+*/
 // POST: guardar turno
 const createTurnos = async (req, res) => {
   try {
@@ -116,7 +133,24 @@ const deleteTurnos = async (req, res) => {
       return respuestaEstandar(res, 400, false, "ID con formato invalido", error.message);
       
     }
-}
+};
 
+const marcarAtendido = async(req,res)=>{
+  try{
+    const {id} =req.params;
+    const turnoActualizado = await Turno.findByIdAndUpdate (
+      id,
+      {estado:'atendido'},
+      {new:true}
+    );
+    if (!turnoActualizado) return respuestaEstandar(res, 404,false,'turno no encontrado ',id);
+      return respuestaEstandar(res, 200,true,'turno Actualizado', turnoActualizado);
+  } catch (error) {
+    return respuestaEstandar(res, 500,false,'ID con formato no valido',error.message);
 
-module.exports = { getTurnos, getTurnosEspecialidad,createTurnos, deleteTurnos };
+  }
+
+};
+
+//module.exports = { getTurnos, getTurnosEspecialidad,createTurnos, deleteTurnos,marcarAtendido,getTurnosID };
+module.exports = { getTurnos, createTurnos, deleteTurnos, marcarAtendido };

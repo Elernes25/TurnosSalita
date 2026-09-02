@@ -1,16 +1,17 @@
 const mongoose = require('mongoose');
+
 pacienteSchema = new mongoose.Schema({
     nombre:{
         type: String,
         required: [true,'El nombre del paciente es obligatorio'],
         uppercase: true
-         },
+     },
      dni:{
-            type: String,
-            unique: true,
-            required: [true,'El DNI es obligatorio'],
-            match: [/^\d[0-9]{7,8}$/, 'El DNI debe tener entre 7 y 8 dígitos']
-        },
+        type: String,
+        unique: true,
+        required: [true,'El DNI es obligatorio'],
+        match: [/^\d[0-9]{7,8}$/, 'El DNI debe tener entre 7 y 8 dígitos']
+    },
     fechaDeNacimiento:{
 	    type: Date,
 	    required:true
@@ -23,43 +24,74 @@ pacienteSchema = new mongoose.Schema({
         },
 	    required:true
 	},
-    direccion:{
-	    type: String,
-	    required: [true,'La dirección es obligatoria'],
-	},
-    telefono:{
-	    type: String,
-	    required:false
-	},
-
-/* telefono: {
-        { tipo: type: String,
-          enum: {
-                values: ['CELULAR', 'FIJO'],
-                 message: '{VALUE} TIPO DE CELULAR NO VALIDO'
-           } , 
-        codigoArea: { type: String },
-        numero: { type: String }
+    domicilio: {
+        calle: {
+          type: String,
+          required: [true, 'La calle es obligatoria']
+         },
+        numero: {
+          type: String,
+          required: [true, 'El número es obligatorio']
+         },
+        piso: {
+          type: String
         },
-        required:false
-    },*/
+        departamento: {
+          type: String
+        },
+        barrio: {
+          type: String
+        }
+    },
+    telefono: {
+        tipo: {
+            type: String,
+            enum: ['CELULAR', 'FIJO']
+        },
+        codigoPais: {    /*guardar sin el + */
+            type: String,
+            required: true,
+            trim: true,
+            match: [/^[1-9][0-9]{0,2}$/, 'El código de País no es válido']
+        },
+        codigoArea: {
+            type: String,
+            required: true,
+            match: [/^[0-9]{2,5}$/, 'El código de área no es válido']
+        },
+        numero: {
+            type: String,
+            required: true,
+            match: [/^[0-9]{6,10}$/, 'El número de teléfono no es válido'] /*620 669 SEIS DIGITOS*/
+        }
+    },
     
     email:{
         type: String,
         required: false,
         match: [/\S+@\S+\.\S+/, 'El correo electrónico no es válido'] 
     },
-
+/*
     tieneObraSocial:{
 	    type: Boolean,
 	    required: [true,'La información de obra social es obligatoria']
 	},
-    obraSocialNombre: {
-	    type: String,
-        /*enum: ['PAMI', 'OSDE', 'IOMA', 'NINGUNA'], //hay mas de 40 obras sociales en el pais 
-        index: true,*/
-	    required: function() { return this.tieneObraSocial; } //referencia al campo tieneObraSocial para que sea obligatorio solo si el paciente tiene obra social
-	},
+    */
+
+    /*si quiero detectar si NO tiene obra social hago una busqueda por el valor en nombre: NINGUNA*/
+    obraSocial: {
+        nombre: {
+            type: String,
+            required: [true, 'El nombre de la obra social es obligatorio'],
+            enum: {
+                values: ['PAMI', 'OSPEL', 'OSDE', 'SANCOR', 'OSECAC', 'SWISS MEDICAL', 'GALENO', 'MEDICUS', 'OMINT', 'FEMEBA', 'OTRAS', 'NINGUNA'],
+                message: '{VALUE} no es una obra social válida. Debe ser una de las siguientes: PAMI, OSPEL, OSDE, SANCOR, OSECAC, SWISS MEDICAL, GALENO, MEDICUS, OMINT, FEMEBA, OTRAS, NINGUNA'
+            }
+        },
+        numeroAfiliado: {
+            type: String
+        },
+    },
 /*Obra social o prepaga (nombre de la entidad).
     Número de afiliado 
     Plan médico (determina el nivel de cobertura).
@@ -71,21 +103,18 @@ pacienteSchema = new mongoose.Schema({
     }
 */
 
-    grupoSanguineo:{
+/*    grupoSanguineo:{
 	    type: String,
 	    required:true,
 	    match: /^(A|B|AB|O)[+-]$|^No sabe$/  // acepta A+, A-, B+, B-, AB+, AB-, O+, O- Hay gente que no se acuerda de su grupo sanguíneo, por lo que se permite "No sabe" como valor válido   
 	},
-    historiaClinica:{ //genero objetos separados para tener un mejor acceso y ordenamiento de la información ante consultas puntuales, 
-                        //ya que la historia clínica puede ser extensa y compleja.
-                        //otros campos a considerar podrian ser: antecedentes familiares, medicación actual, alergias a medicamentos, etc.
-                        //podria haber datos relevantes segun la especialidad medica, por ej.: antecedentes obstetricos para ginecologia,
-                        //antecedentes cardiacos para cardiologia, etc.
-	    alergias: [{ type: String }], /*arreglo de strings para realizar busquedas refinadas */
-        cirugias: [{ type: String }],
-        enfermedadesCronicas: [{ type: String }],
-        historiaGeneral: { type: String } /* info no especifica pero relevante*/
-	}
+    historiaClinica:{
+       type: mongoose.Schema.Types.ObjectId,
+        ref: 'HistoriaClinica',
+        required: false     
+    }
+*/
+
 },
 {timesstamps: true},
 
@@ -112,7 +141,6 @@ pacienteSchema.set('toJSON', {
     //<------- agregar virtuals despues  virtuals: true 
 }
 );
-
 
 //nombre del modelo: Paciente con mayuscula//
 module.exports = mongoose.model("Paciente", pacienteSchema)
